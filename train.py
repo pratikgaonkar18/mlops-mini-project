@@ -4,6 +4,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 import os
+import mlflow
+import mlflow.sklearn
+
+# Set experiment name (groups related runs)
+mlflow.set_experiment("iris-classification")
 
 # 1. Load data
 data = pd.read_csv("data/iris.csv")
@@ -11,23 +16,45 @@ data = pd.read_csv("data/iris.csv")
 X = data.drop("target", axis=1)
 y = data["target"]
 
-# 2. Split into train and test
+# 2. Split into train and test (fixed random_state for reproducibility)
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
-# 3. Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X_train, y_train)
+# Parameters (we will track these)
+n_estimators = 100
+random_state = 42
 
-# 4. Evaluate model
-y_pred = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
+with mlflow.start_run():
+    # 3. Log parameters
+    mlflow.log_param("n_estimators", n_estimators)
+    mlflow.log_param("random_state", random_state)
 
-print(f"Model accuracy: {accuracy}")
+    # 4. Train model
+    model = RandomForestClassifier(
+        n_estimators=n_estimators, random_state=random_state
+    )
+    model.fit(X_train, y_train)
 
-# 5. Save model
-os.makedirs("models", exist_ok=True)
-joblib.dump(model, "models/model.pkl")
+    # 5. Evaluate model
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
 
-print("Model saved to models/model.pkl")
+    print(f"Model accuracy: {accuracy}")
+
+    # 6. Log metric
+    mlflow.log_metric("accuracy", accuracy)
+
+    # 7. Save model
+    os.makedirs("models", exist_ok=True)
+    model_path = "models/model.pkl"
+    joblib.dump(model, model_path)
+
+    print("Model saved to models/model.pkl")
+
+    # 8. Log model as artifact
+    mlflow.log_artifact(model_path)
+
+    # (Optional but nice) log model in MLflow format
+    mlflow.sklearn.log_model(model, "model")
+
