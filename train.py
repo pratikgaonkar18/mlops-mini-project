@@ -22,7 +22,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Parameters (we will track these)
-n_estimators = 100
+n_estimators = 200
 random_state = 42
 
 with mlflow.start_run():
