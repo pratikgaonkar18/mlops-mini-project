@@ -19,7 +19,7 @@ class IrisInput(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "MLOps Mini Project API is running"}
+    return {"message": "MLOps Mini Project API is running ci-test"}
 
 @app.post("/predict")
 def predict(input: IrisInput):
