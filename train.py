@@ -42,6 +42,17 @@ with mlflow.start_run():
 
     print(f"Model accuracy: {accuracy}")
 
+    import json
+    from pathlib import Path
+
+    metrics = {
+        "accuracy": float(accuracy)
+    } 
+
+    Path("metrics.json").write_text(json.dumps(metrics, indent=2))
+    print("Metrics saved to metrics.json")
+
+
     # 6. Log metric
     mlflow.log_metric("accuracy", accuracy)
 
