@@ -6,6 +6,9 @@ import joblib
 import os
 import mlflow
 import mlflow.sklearn
+import json
+from pathlib import Path
+
 
 # Set experiment name (groups related runs)
 mlflow.set_experiment("iris-classification")
@@ -51,7 +54,15 @@ with mlflow.start_run():
 
     Path("metrics.json").write_text(json.dumps(metrics, indent=2))
     print("Metrics saved to metrics.json")
+	
+    THRESHOLD = 0.90
 
+    if accuracy >= THRESHOLD:
+         print(f"Accuracy {accuracy} >= {THRESHOLD}. Model passes quality gate. Registering model...")
+    # Your existing MLflow registration/logging code should stay here
+    # (e.g., mlflow.log_metric, mlflow.sklearn.log_model, or your current registration logic)
+    else:
+         raise RuntimeError(f"Accuracy {accuracy} < {THRESHOLD}. Model failed quality gate. Not registering.")
 
     # 6. Log metric
     mlflow.log_metric("accuracy", accuracy)
