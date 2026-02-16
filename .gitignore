@@ -16,3 +16,7 @@ models/
 
 # OS / editor files
 .DS_Store
+/models
+
+# DVC local storage
+dvc-storage/
