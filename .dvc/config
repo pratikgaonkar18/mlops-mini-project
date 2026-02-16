@@ -1,4 +1,4 @@
 [core]
-    remote = localstorage
-['remote "localstorage"']
-    url = ../dvc-storage
+    remote = origin
+['remote "origin"']
+    url = https://github.com/pratikgaonkar18/mlops-mini-project-dvc-store.git
